@@ -60,7 +60,7 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
             } else {
                 JSONObject jsonObject = new JSONObject();
                 try {
-                    jsonObject.put("vehicle_id", 7122);
+                    jsonObject.put("vehicle_id", 2584);
                     for (int i = 0; i < key.length; ++i) {
                         if (pass[i]) {
                             jsonObject.put(key[i], row[i]);
@@ -94,7 +94,7 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
 
     private Scanner openCsv() {
         try {
-            return new Scanner(assetManager.open("test.csv"));
+            return new Scanner(assetManager.open("CSVLog_20160827_102232.csv"));
         } catch (IOException e) {
             e.printStackTrace();
         }

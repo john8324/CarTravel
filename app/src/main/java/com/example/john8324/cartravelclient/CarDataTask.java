@@ -26,6 +26,13 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
         this.textView = textView;
     }
 
+    private void actualPost(httpposter login, String apiFun, JSONObject jsonObject) {
+        publishProgress(jsonObject);
+        String postString = "apiFun=" + apiFun + "&json=" + jsonObject.toString();
+        Log.d("postString", postString);
+        login.doPost("http://140.113.216.201/carInfoApi.php", postString, login.cookie, "utf-8");
+    }
+
     @Override
     protected Void doInBackground(Void... params) {
         Scanner input = openCsv();
@@ -70,10 +77,8 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
                     e.printStackTrace();
                 }
 
-                publishProgress(jsonObject);
-                String postString = "apiFun=pathAdd&json=" + jsonObject.toString();
-                Log.d("postString", postString);
-                login.doPost("http://140.113.216.201/carInfoApi.php", postString, login.cookie, "utf-8");
+                actualPost(login, "pathAdd", jsonObject);
+
             } else {
                 JSONObject jsonObject = new JSONObject();
                 try {
@@ -87,10 +92,7 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
                     e.printStackTrace();
                 }
 
-                publishProgress(jsonObject);
-                String postString = "apiFun=infoAdd&json=" + jsonObject.toString();
-                Log.d("postString", postString);
-                login.doPost("http://140.113.216.201/carInfoApi.php", postString, login.cookie, "utf-8");
+                actualPost(login, "infoAdd", jsonObject);
 
                 try {
                     Thread.sleep(500);

@@ -22,6 +22,7 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // Initialization
         assetManager = getAssets();
         textView = (TextView) findViewById(R.id.textView);
         carDataTask = new CarDataTask(assetManager, textView);
@@ -35,7 +36,7 @@ public class MainActivity extends Activity {
     }
 }
 
-class CarDataTask extends AsyncTask<Void, Integer, Void> {
+class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
 
     private AssetManager assetManager;
     private TextView textView;
@@ -51,8 +52,12 @@ class CarDataTask extends AsyncTask<Void, Integer, Void> {
         if (input == null) {
             return null;
         }
+        // ------
+        // TODO Login the server
+        // ------
+        final String[] match = {"Latitude", "Longitude", "Vehicle speed", "Instant fuel economy"};
         String[] key = null;
-        int data_num = 0;
+        boolean[] pass = null;
         while (!isCancelled() && input.hasNextLine()) {
             String[] row = input.nextLine().split(",");
             // Log.d("", "Len = " + cell.length);
@@ -61,18 +66,32 @@ class CarDataTask extends AsyncTask<Void, Integer, Void> {
             }
             if (key == null) {
                 key = row;
+                pass = new boolean[key.length];
+                for (int i = 0; i < key.length; ++i) {
+                    for (String str : match) {
+                        pass[i] = pass[i] || key[i].contains(str);
+                        if (pass[i]) {
+                            break;
+                        }
+                    }
+                }
             } else {
                 JSONObject jsonObject = new JSONObject();
                 for (int i = 0; i < key.length; ++i) {
                     try {
-                        jsonObject.put(key[i], row[i]);
+                        if (pass[i]) {
+                            jsonObject.put(key[i], row[i]);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
 
-                publishProgress(++data_num);
-                Log.d("", "" + data_num);
+                publishProgress(jsonObject);
+
+                // ------
+                // TODO POST jsonObject to server
+                // ------
 
                 try {
                     Thread.sleep(500);
@@ -86,9 +105,9 @@ class CarDataTask extends AsyncTask<Void, Integer, Void> {
     }
 
     @Override
-    protected void onProgressUpdate(Integer... values) {
+    protected void onProgressUpdate(JSONObject... values) {
         super.onProgressUpdate(values);
-        textView.setText("" + values[0]);
+        textView.setText(values[0].toString());
     }
 
     private Scanner openCsv() {

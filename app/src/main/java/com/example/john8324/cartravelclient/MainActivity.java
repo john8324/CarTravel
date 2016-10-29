@@ -27,6 +27,7 @@ public class MainActivity extends Activity {
         textView = (TextView) findViewById(R.id.textView);
         carDataTask = new CarDataTask(assetManager, textView);
         carDataTask.execute();
+
     }
 
     @Override
@@ -54,6 +55,8 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
         }
         // ------
         // TODO Login the server
+        new Thread(new httpposter()).start();
+
         // ------
         final String[] match = {"Latitude", "Longitude", "Vehicle speed", "Instant fuel economy"};
         String[] key = null;

@@ -53,12 +53,13 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
         if (input == null) {
             return null;
         }
-        // ------
-        // TODO Login the server
-        new Thread(new httpposter()).start();
 
-        // ------
+        // Login the server
+        httpposter login = new httpposter();
+        login.login();
+
         final String[] match = {"Latitude", "Longitude", "Vehicle speed", "Instant fuel economy"};
+        final String[] actualKey = {"start_time", "latitude", "longitude", "vehicle_speed"};
         String[] key = null;
         boolean[] pass = null;
         while (!isCancelled() && input.hasNextLine()) {
@@ -71,30 +72,31 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
                 key = row;
                 pass = new boolean[key.length];
                 for (int i = 0; i < key.length; ++i) {
-                    for (String str : match) {
-                        pass[i] = pass[i] || key[i].contains(str);
+                    for (int j = 0; j < match.length; ++j) {
+                        pass[i] = pass[i] || key[i].contains(match[j]);
                         if (pass[i]) {
+                            key[i] = actualKey[j];
                             break;
                         }
                     }
                 }
             } else {
                 JSONObject jsonObject = new JSONObject();
-                for (int i = 0; i < key.length; ++i) {
-                    try {
+                try {
+                    jsonObject.put("vehicle_id", 7122);
+                    for (int i = 0; i < key.length; ++i) {
                         if (pass[i]) {
                             jsonObject.put(key[i], row[i]);
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
 
                 publishProgress(jsonObject);
-
-                // ------
-                // TODO POST jsonObject to server
-                // ------
+                String postString = "apiFun=infoAdd&json=" + jsonObject.toString();
+                Log.d("postString", postString);
+                login.doPost("http://140.113.216.201/carInfoApi.php", postString, login.cookie, "utf-8");
 
                 try {
                     Thread.sleep(500);

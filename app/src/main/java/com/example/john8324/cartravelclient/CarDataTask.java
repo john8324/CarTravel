@@ -18,6 +18,8 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
 
     private AssetManager assetManager;
     private TextView textView;
+    private final String dateString = "20160827_102232";
+    private final int vehicleID = 2584, vehicleType = 0;
 
     CarDataTask(AssetManager assetManager, TextView textView) {
         this.assetManager = assetManager;
@@ -57,10 +59,25 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
                         }
                     }
                 }
+
+                final String startDate = "2016-08-27 10:22:32";
+                JSONObject jsonObject = new JSONObject();
+                try{
+                    jsonObject.put("vehicle_id", vehicleID);
+                    jsonObject.put("vehicle_type", vehicleType);
+                    jsonObject.put("start_date", startDate);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                publishProgress(jsonObject);
+                String postString = "apiFun=pathAdd&json=" + jsonObject.toString();
+                Log.d("postString", postString);
+                login.doPost("http://140.113.216.201/carInfoApi.php", postString, login.cookie, "utf-8");
             } else {
                 JSONObject jsonObject = new JSONObject();
                 try {
-                    jsonObject.put("vehicle_id", 2584);
+                    jsonObject.put("vehicle_id", vehicleID);
                     for (int i = 0; i < key.length; ++i) {
                         if (pass[i]) {
                             jsonObject.put(key[i], row[i]);
@@ -94,7 +111,7 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
 
     private Scanner openCsv() {
         try {
-            return new Scanner(assetManager.open("CSVLog_20160827_102232.csv"));
+            return new Scanner(assetManager.open("CSVLog_" + dateString + ".csv"));
         } catch (IOException e) {
             e.printStackTrace();
         }

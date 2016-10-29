@@ -35,7 +35,7 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
         httpposter login = new httpposter();
         login.login();
 
-        final String[] match = {"Latitude", "Longitude", "Vehicle speed", "Instant fuel economy"};
+        final String[] match = {"Time (sec)", "Latitude", "Longitude", "Vehicle speed"};
         final String[] actualKey = {"start_time", "latitude", "longitude", "vehicle_speed"};
         String[] key = null;
         boolean[] pass = null;

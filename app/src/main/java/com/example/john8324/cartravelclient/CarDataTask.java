@@ -67,7 +67,7 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
                     }
                 }
 
-                final String startDate = "2016-08-27 10:22:32";
+                final String startDate = dateString.substring(0, 4)+"-"+dateString.substring(4, 6)+"-"+dateString.substring(6, 8)+" "+dateString.substring(9, 11)+":"+dateString.substring(11, 13)+":"+dateString.substring(13, 15); // 2016-08-27 10:22:32
                 JSONObject jsonObject = new JSONObject();
                 try{
                     jsonObject.put("vehicle_id", vehicleID);

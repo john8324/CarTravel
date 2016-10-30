@@ -3,6 +3,7 @@ package com.example.john8324.cartravelclient;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import org.json.JSONException;
@@ -18,12 +19,18 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
 
     private AssetManager assetManager;
     private TextView textView;
+    private WebView webView;
     private final String dateString = "20160827_102232";
     private final int vehicleID = 2584, vehicleType = 0;
 
-    CarDataTask(AssetManager assetManager, TextView textView) {
+    private final String[] match = {"Time (sec)", "Latitude", "Longitude", "Vehicle speed"};
+    private final String[] actualKey = {"start_time", "latitude", "longitude", "vehicle_speed"};
+
+
+    CarDataTask(AssetManager assetManager, TextView textView, WebView webView) {
         this.assetManager = assetManager;
         this.textView = textView;
+        this.webView = webView;
     }
 
     private void actualPost(httpposter login, String apiFun, JSONObject jsonObject) {
@@ -31,6 +38,10 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
         String postString = "apiFun=" + apiFun + "&json=" + jsonObject.toString();
         Log.d("postString", postString);
         login.doPost("http://140.113.216.201/carInfoApi.php", postString, login.cookie, "utf-8");
+    }
+
+    private void markAndMove(double latitude, double longitude, double speed) {
+        webView.loadUrl("javascript:addNode({'latitude':'" + latitude + "','longitude':'" + longitude + "','vehicle_speed':'" + speed + "'});");
     }
 
     @Override
@@ -44,8 +55,6 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
         httpposter login = new httpposter();
         login.login();
 
-        final String[] match = {"Time (sec)", "Latitude", "Longitude", "Vehicle speed"};
-        final String[] actualKey = {"start_time", "latitude", "longitude", "vehicle_speed"};
         String[] key = null;
         boolean[] pass = null;
         while (!isCancelled() && input.hasNextLine()) {
@@ -108,7 +117,16 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
     @Override
     protected void onProgressUpdate(JSONObject... values) {
         super.onProgressUpdate(values);
+        double latitude = 0, longitude = 0, speed = 0;
         textView.setText(values[0].toString());
+        try {
+            latitude = Double.parseDouble((String)values[0].get(actualKey[1]));
+            longitude = Double.parseDouble((String)values[0].get(actualKey[2]));
+            speed = Double.parseDouble((String)values[0].get(actualKey[3]));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        markAndMove(latitude, longitude, speed);
     }
 
     private Scanner openCsv() {

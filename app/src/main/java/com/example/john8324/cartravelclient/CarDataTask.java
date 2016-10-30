@@ -23,8 +23,8 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
     private final String dateString = "20160827_102232";
     private final int vehicleID = 2584, vehicleType = 0;
 
-    private final String[] match = {"Time (sec)", "Latitude", "Longitude", "Vehicle speed"};
-    private final String[] actualKey = {"start_time", "latitude", "longitude", "vehicle_speed"};
+    private final String[] match = {"Time (sec)", "Latitude", "Longitude", "Vehicle speed", "Fuel rate"};
+    private final String[] actualKey = {"start_time", "latitude", "longitude", "vehicle_speed", "fuel_rate"};
 
 
     CarDataTask(AssetManager assetManager, TextView textView, WebView webView) {

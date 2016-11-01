@@ -4,17 +4,24 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.IOException;
 
 public class MainActivity extends Activity {
 
@@ -22,6 +29,14 @@ public class MainActivity extends Activity {
     CarDataTask carDataTask;
     TextView textView;
     WebView webView;
+    boolean Fan = false, Music=false;
+
+    MediaPlayer player;
+
+
+
+    ImageButton btncamera, btnplay, btnpause, btnfan;
+
 
     final static String LOG_TAG = "MainActivity";
 
@@ -90,6 +105,51 @@ public class MainActivity extends Activity {
         assetManager = getAssets();
         textView = (TextView) findViewById(R.id.textView);
         webView = (WebView) findViewById(R.id.webView);
+        btncamera = (ImageButton) findViewById(R.id.img_camera);
+        btnplay = (ImageButton) findViewById(R.id.img_play);
+        btnfan = (ImageButton) findViewById(R.id.img_fan);
+        btnpause = (ImageButton) findViewById(R.id.img_pause);
+
+        btncamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                carDataTask.photo = true;
+            }
+        });
+        btnplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                    Toast.makeText(MainActivity.this, "Music Play", Toast.LENGTH_SHORT).show();
+                    Music = true;
+
+                player.start();
+
+            }
+        });
+        btnpause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                    Toast.makeText(MainActivity.this, "Music Paused ", Toast.LENGTH_SHORT).show();
+                    Music = false;
+
+                player.pause();
+            }
+        });
+        btnfan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!Fan) {
+                    Toast.makeText(MainActivity.this, "Fan Started", Toast.LENGTH_SHORT).show();
+                    Fan = true;
+                }
+                else{
+                    Toast.makeText(MainActivity.this, "Fan Closed", Toast.LENGTH_SHORT).show();
+                    Fan = false;
+                }
+
+            }
+        });
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(mWebViewClient);
@@ -111,6 +171,18 @@ public class MainActivity extends Activity {
 
 
         carDataTask = new CarDataTask(assetManager, textView, webView);
+
+
+
+        try {
+            AssetFileDescriptor afd = getAssets().openFd("test.mp3");
+            player = new MediaPlayer();
+            player.setDataSource(afd.getFileDescriptor(),afd.getStartOffset(),afd.getLength());
+            player.prepare();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         Log.i(LOG_TAG, "onCreate Finish");
 

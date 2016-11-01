@@ -15,7 +15,7 @@ class httpposter{
 
     void login() {
         // CRITICAL WARNING: Must upload FAKE account and password !!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        doPost("http://140.113.216.201/logincheck.php", "account=7122&password=7122", null, "utf-8");
+        doPost("http://140.113.216.201/logincheck.php", "account=jerrychen&password=abc123", null, "utf-8");
         cookie = _cookie;
     }
 

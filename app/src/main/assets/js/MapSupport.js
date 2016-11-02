@@ -46,7 +46,7 @@ var tripIcons = [];
 var tripMarker = [];
 var tripLine;
 var tripLines = [];
-var spotMarker;
+var spotMarker =[];
 
 function clearPath() {
     for (var i = 0; i < tripMarker.length; i++) {
@@ -174,6 +174,28 @@ function addPath(locArr) {
 
         tripMarker[i].setMap(map);
     }
+}
+
+function addSpot(curloc) {
+	var idx = spotMarker.length;
+	spotMarker[idx] = new google.maps.Marker({
+		position: new google.maps.LatLng(curloc["latitude"], curloc["longitude"]),
+//            icon: new google.maps.MarkerImage("img/car_red.png", null, null, null, new google.maps.Size(60, 60)),
+		icon: new google.maps.MarkerImage(curloc["img_url"], null, null, null, new google.maps.Size(60, 60)),
+		title: curloc["name"]
+	});
+	spotMarker[idx].addListener('click', function () {
+		map.setZoom(20);
+		map.setCenter(this.getPosition());
+
+		var infowindow = new google.maps.InfoWindow({
+			content: '<h3>'+curloc["name"] + '</h3><br><img src="' + curloc["img_url"] + '" alt="Spot View" style="width:304px;height:228px;">'
+		});
+		infowindow.open(map, this);
+	});
+
+	spotMarker[idx].setMap(map);
+	locateMap(curloc["latitude"], curloc["longitude"], 20);
 }
 
 google.maps.event.addDomListener(window, 'load', initialize);

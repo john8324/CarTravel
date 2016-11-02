@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Scanner;
 
 /**
@@ -20,12 +21,14 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
     private AssetManager assetManager;
     private TextView textView;
     private WebView webView;
-    private final String dateString = "20160827_102232";
-    private final int vehicleID = 2584, vehicleType = 0;
+    private final String dateString = "20160827_113832";
+    private final int vehicleID = 177785, vehicleType = 0;
 
     private final String[] match = {"Time (sec)", "Latitude", "Longitude", "Vehicle speed", "Fuel rate"};
     private final String[] actualKey = {"start_time", "latitude", "longitude", "vehicle_speed", "fuel_rate"};
 
+
+    boolean photo = false;
 
     CarDataTask(AssetManager assetManager, TextView textView, WebView webView) {
         this.assetManager = assetManager;
@@ -33,7 +36,7 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
         this.webView = webView;
     }
 
-    private void actualPost(httpposter login, String apiFun, JSONObject jsonObject) {
+    private boolean actualPost(httpposter login, String apiFun, JSONObject jsonObject) {
         publishProgress(jsonObject);
         String postString = "apiFun=" + apiFun + "&json=" + jsonObject.toString();
         Log.d("postString", postString);
@@ -43,7 +46,9 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
     private void markAndMove(double latitude, double longitude, double speed) {
         webView.loadUrl("javascript:addNode({'latitude':'" + latitude + "','longitude':'" + longitude + "','vehicle_speed':'" + speed + "'});");
     }
-
+    void addImgAndMove(double latitude, double longitude, String name, String img_url) {
+        webView.loadUrl("javascript:addSpot({latitude: '" + latitude + "', longitude: '" + longitude + "', name: '" + name + "', img_url: '" + img_url + "'});");
+    }
     @Override
     protected Void doInBackground(Void... params) {
         Scanner input = openCsv();
@@ -86,7 +91,10 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
                     e.printStackTrace();
                 }
 
-                actualPost(login, "pathAdd", jsonObject);
+                boolean flag = actualPost(login, "pathAdd", jsonObject);
+                if (!flag) {
+                    break;
+                }
 
             } else {
                 JSONObject jsonObject = new JSONObject();
@@ -117,16 +125,22 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
     @Override
     protected void onProgressUpdate(JSONObject... values) {
         super.onProgressUpdate(values);
-        double latitude = 0, longitude = 0, speed = 0;
         textView.setText(values[0].toString());
         try {
+            double latitude = 0, longitude = 0, speed = 0;
             latitude = Double.parseDouble((String)values[0].get(actualKey[1]));
             longitude = Double.parseDouble((String)values[0].get(actualKey[2]));
             speed = Double.parseDouble((String)values[0].get(actualKey[3]));
+            markAndMove(latitude, longitude, speed);
+            if (photo) {
+                addImgAndMove(latitude, longitude, (new Date()).toLocaleString(), "http://www.thenology.com/wp-content/uploads/2016/01/835390-john-cena-pictures.jpg");
+            }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        markAndMove(latitude, longitude, speed);
+        photo = false;
+
+
     }
 
     private Scanner openCsv() {

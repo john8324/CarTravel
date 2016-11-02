@@ -9,18 +9,24 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.ConsoleMessage;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.Calendar;
+import java.util.Date;
 
 public class MainActivity extends Activity {
 
     AssetManager assetManager;
     CarDataTask carDataTask;
     TextView textView;
+    Button button;
     WebView webView;
 
     final static String LOG_TAG = "MainActivity";
@@ -90,6 +96,13 @@ public class MainActivity extends Activity {
         assetManager = getAssets();
         textView = (TextView) findViewById(R.id.textView);
         webView = (WebView) findViewById(R.id.webView);
+        button = (Button) findViewById(R.id.button);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                carDataTask.photo = true;
+            }
+        });
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.setWebViewClient(mWebViewClient);

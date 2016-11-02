@@ -83,10 +83,10 @@ function addSpots(spotArr) {
 
 function addNode(curloc) {
 	var idx = tripPath.length;
-	
+
 	tripPath[idx] = new google.maps.LatLng(curloc["latitude"], curloc["longitude"]);
-	
-	
+
+
 	if (curloc["vehicle_speed"] < 50) {
 		tripIcons[idx] = new google.maps.MarkerImage("img/car_red.png", null, null, null, new google.maps.Size(30, 30));
 	} else if (curloc["vehicle_speed"] >= 50 && curloc["vehicle_speed"] <= 80) {
@@ -108,7 +108,7 @@ function addNode(curloc) {
 	});
 
 	tripMarker[idx].setMap(map);
-	
+
 	if(idx > 0){ //link pre-node
 		var tmpLine = new google.maps.Polyline({
 			path: [tripPath[idx - 1], tripPath[idx]],
@@ -120,7 +120,7 @@ function addNode(curloc) {
 		});
 		tmpLine.setMap(map);
 	}
-	
+
 	locateMap(curloc["latitude"], curloc["longitude"], 20);
 }
 

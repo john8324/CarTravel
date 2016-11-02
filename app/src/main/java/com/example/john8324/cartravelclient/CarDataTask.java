@@ -21,8 +21,8 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
     private AssetManager assetManager;
     private TextView textView;
     private WebView webView;
-    private final String dateString = "20160827_113832";
-    private final int vehicleID = 177785, vehicleType = 0;
+    private final String dateString = "20160827_102232";
+    private final int vehicleID = 9527, vehicleType = 0;
 
     private final String[] match = {"Time (sec)", "Latitude", "Longitude", "Vehicle speed", "Fuel rate"};
     private final String[] actualKey = {"start_time", "latitude", "longitude", "vehicle_speed", "fuel_rate"};
@@ -40,7 +40,7 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
         publishProgress(jsonObject);
         String postString = "apiFun=" + apiFun + "&json=" + jsonObject.toString();
         Log.d("postString", postString);
-        login.doPost("http://140.113.216.201/carInfoApi.php", postString, login.cookie, "utf-8");
+        return login.doPost("http://140.113.216.201/carInfoApi.php", postString, login.cookie, "utf-8");
     }
 
     private void markAndMove(double latitude, double longitude, double speed) {
@@ -133,7 +133,7 @@ class CarDataTask extends AsyncTask<Void, JSONObject, Void> {
             speed = Double.parseDouble((String)values[0].get(actualKey[3]));
             markAndMove(latitude, longitude, speed);
             if (photo) {
-                addImgAndMove(latitude, longitude, (new Date()).toLocaleString(), "http://www.thenology.com/wp-content/uploads/2016/01/835390-john-cena-pictures.jpg");
+                addImgAndMove(latitude, longitude, (new Date()).toLocaleString(), "http://9.share.photo.xuite.net/mejun0322/19d60f0/4945147/188542453_l.jpg");
             }
         } catch (JSONException e) {
             e.printStackTrace();
